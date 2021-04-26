@@ -16,7 +16,7 @@ const ImageTagger = () => {
 				{Array(nbOfTags)
 					.fill(null)
 					.map((_, i) => (
-						<Area index={i} />
+						<Area key={i} index={i} />
 					))}
 			</div>
 		</div>
