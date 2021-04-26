@@ -4,6 +4,8 @@ import ImageSelectForm from "./components/ImageSelectForm";
 import { useAppSelector } from "../../app/hooks";
 import { selectImageData } from "./imageTaggerSlice";
 
+import "./ImageTagger.scss";
+
 const ImageTaggerWrapper = () => {
 	const imageData = useAppSelector(selectImageData);
 

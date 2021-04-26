@@ -4,8 +4,6 @@ import { selectImageData } from "../imageTaggerSlice";
 
 import AreaPicker from "./AreaPicker";
 
-import "./ImageTagger.css";
-
 const ImageTagger = () => {
 	const imageData = useAppSelector(selectImageData);
 	return (
