@@ -13,13 +13,26 @@ interface TaggedArea extends NewArea {
 	isSelected: boolean;
 }
 
+interface ImageDimensions {
+	width: number;
+	height: number;
+}
+
+interface DragAreaPayload {
+	index: number;
+	movX: number;
+	movY: number;
+}
+
 export interface ImageTaggerState {
 	imageData: string | undefined;
+	imageDimensions: ImageDimensions | undefined;
 	taggedAreas: TaggedArea[];
 }
 
 const initialState: ImageTaggerState = {
 	imageData: undefined,
+	imageDimensions: undefined,
 	taggedAreas: [],
 };
 
@@ -29,6 +42,9 @@ export const imageTaggerSlice = createSlice({
 	reducers: {
 		setImageData: (state, action: PayloadAction<string>) => {
 			state.imageData = action.payload;
+		},
+		setImageDimensions: (state, action: PayloadAction<ImageDimensions>) => {
+			state.imageDimensions = action.payload;
 		},
 		unselectAllAreas: (state) => {
 			state.taggedAreas = [
@@ -55,14 +71,24 @@ export const imageTaggerSlice = createSlice({
 				})),
 			];
 		},
+		dragArea: (state, action: PayloadAction<DragAreaPayload>) => {
+			if (state.imageDimensions) {
+				state.taggedAreas[action.payload.index].origin.x +=
+					(action.payload.movX * 100) / state.imageDimensions.width;
+				state.taggedAreas[action.payload.index].origin.y +=
+					(action.payload.movY * 100) / state.imageDimensions.height;
+			}
+		},
 	},
 });
 
 export const {
 	setImageData,
+	setImageDimensions,
 	unselectAllAreas,
 	addAndSelectArea,
 	selectAreaByIndex,
+	dragArea,
 } = imageTaggerSlice.actions;
 
 export const getImageData = (state: RootState) => state.imageTagger.imageData;
