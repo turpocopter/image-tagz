@@ -36,7 +36,6 @@ const AreaPicker = () => {
 
 	const handleMouseMove = (e: React.MouseEvent & { target: any }) => {
 		if (startPoint && e.target instanceof HTMLElement) {
-			console.log(e.target, e.clientX, e.clientY);
 			setEndPoint(
 				pickLocalCoords({ x: e.clientX, y: e.clientY }, mapRef.current)
 			);
