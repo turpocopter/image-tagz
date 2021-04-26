@@ -39,6 +39,14 @@
 	&.selected {
 		cursor: move;
 	}
+	.areaResizer {
+		position: absolute;
+		width: 20px;
+		height: 20px;
+		bottom: 0;
+		right: 0;
+		cursor: nwse-resize;
+	}
 }
 .tagEditor {
 	position: absolute;

@@ -18,7 +18,7 @@ interface ImageDimensions {
 	height: number;
 }
 
-interface DragAreaPayload {
+interface EditAreaPayload {
 	index: number;
 	movX: number;
 	movY: number;
@@ -71,11 +71,19 @@ export const imageTaggerSlice = createSlice({
 				})),
 			];
 		},
-		dragArea: (state, action: PayloadAction<DragAreaPayload>) => {
+		dragArea: (state, action: PayloadAction<EditAreaPayload>) => {
 			if (state.imageDimensions) {
 				state.taggedAreas[action.payload.index].origin.x +=
 					(action.payload.movX * 100) / state.imageDimensions.width;
 				state.taggedAreas[action.payload.index].origin.y +=
+					(action.payload.movY * 100) / state.imageDimensions.height;
+			}
+		},
+		resizeArea: (state, action: PayloadAction<EditAreaPayload>) => {
+			if (state.imageDimensions) {
+				state.taggedAreas[action.payload.index].width +=
+					(action.payload.movX * 100) / state.imageDimensions.width;
+				state.taggedAreas[action.payload.index].height +=
 					(action.payload.movY * 100) / state.imageDimensions.height;
 			}
 		},
@@ -89,6 +97,7 @@ export const {
 	addAndSelectArea,
 	selectAreaByIndex,
 	dragArea,
+	resizeArea,
 } = imageTaggerSlice.actions;
 
 export const getImageData = (state: RootState) => state.imageTagger.imageData;

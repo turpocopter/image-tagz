@@ -4,6 +4,7 @@ import {
 	getTaggedAreaData,
 	selectAreaByIndex,
 	dragArea,
+	resizeArea,
 } from "../imageTaggerSlice";
 
 interface AreaProps {
@@ -12,6 +13,7 @@ interface AreaProps {
 
 const Area = ({ index }: AreaProps) => {
 	const [isMoving, setIsMoving] = useState(false);
+	const [isResizing, setIsResizing] = useState(false);
 	const { origin, width, height, title, isSelected } = useAppSelector((state) =>
 		getTaggedAreaData(state, index)
 	);
@@ -27,13 +29,29 @@ const Area = ({ index }: AreaProps) => {
 
 	const handleMouseMove = (e: React.MouseEvent) => {
 		if (isMoving) {
-			console.log(e.movementX, e.movementY);
 			dispatch(dragArea({ index, movX: e.movementX, movY: e.movementY }));
 		}
 	};
 
 	const handleMouseUp = () => {
 		setIsMoving(false);
+	};
+
+	const handleStartResize = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		setIsResizing(true);
+	};
+
+	const handleResize = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		if (isResizing) {
+			dispatch(resizeArea({ index, movX: e.movementX, movY: e.movementY }));
+		}
+	};
+
+	const handleEndResize = (e: React.MouseEvent) => {
+		e.stopPropagation();
+		setIsResizing(false);
 	};
 
 	const wrapperStyles = {
@@ -51,7 +69,16 @@ const Area = ({ index }: AreaProps) => {
 			onMouseDown={handleMouseDown}
 			onMouseMove={handleMouseMove}
 			onMouseUp={handleMouseUp}>
-			<div className={areaClasses.join(" ")}></div>
+			<div className={areaClasses.join(" ")}>
+				{isSelected && (
+					<div
+						className='areaResizer'
+						onMouseDown={handleStartResize}
+						onMouseMove={handleResize}
+						onMouseUp={handleEndResize}
+					/>
+				)}
+			</div>
 		</div>
 	);
 };
