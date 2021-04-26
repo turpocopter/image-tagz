@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import Point from "./Point";
 
 export interface ImageArea {
-	x: number;
-	y: number;
+	origin: Point;
 	width: number;
 	height: number;
 	title: string;
