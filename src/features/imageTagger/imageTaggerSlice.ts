@@ -24,6 +24,11 @@ interface EditAreaPayload {
 	movY: number;
 }
 
+interface EditTitlePayload {
+	index: number;
+	title: string;
+}
+
 export interface ImageTaggerState {
 	imageData: string | undefined;
 	imageDimensions: ImageDimensions | undefined;
@@ -87,6 +92,9 @@ export const imageTaggerSlice = createSlice({
 					(action.payload.movY * 100) / state.imageDimensions.height;
 			}
 		},
+		setAreaTitle: (state, action: PayloadAction<EditTitlePayload>) => {
+			state.taggedAreas[action.payload.index].title = action.payload.title;
+		},
 	},
 });
 
@@ -98,6 +106,7 @@ export const {
 	selectAreaByIndex,
 	dragArea,
 	resizeArea,
+	setAreaTitle,
 } = imageTaggerSlice.actions;
 
 export const getImageData = (state: RootState) => state.imageTagger.imageData;

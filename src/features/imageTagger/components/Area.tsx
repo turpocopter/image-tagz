@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
+import AutosizeInput from "react-input-autosize";
 import {
 	getTaggedAreaData,
 	selectAreaByIndex,
 	dragArea,
 	resizeArea,
+	setAreaTitle,
 } from "../imageTaggerSlice";
 
 interface AreaProps {
@@ -77,6 +79,18 @@ const Area = ({ index }: AreaProps) => {
 						onMouseMove={handleResize}
 						onMouseUp={handleEndResize}
 					/>
+				)}
+			</div>
+			<div className='areaTag'>
+				{isSelected ? (
+					<AutosizeInput
+						value={title}
+						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+							dispatch(setAreaTitle({ index, title: e.target.value }))
+						}
+					/>
+				) : (
+					<p>{title}</p>
 				)}
 			</div>
 		</div>
