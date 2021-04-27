@@ -1,5 +1,5 @@
 import React from "react";
-import { useAppSelector, useAppDispatch } from "../../../app/hooks";
+import { useAppSelector } from "../../../app/hooks";
 import { getImageData, getTaggedAreasLength } from "../imageTaggerSlice";
 
 import AreaPicker from "./AreaPicker";
@@ -9,7 +9,6 @@ import Toolbar from "./Toolbar";
 const ImageTagger = () => {
 	const imageData = useAppSelector(getImageData);
 	const nbOfTags = useAppSelector(getTaggedAreasLength);
-	const dispatch = useAppDispatch();
 	return (
 		<div className='imageTagger row'>
 			<div className='col-12 col-md-6'>

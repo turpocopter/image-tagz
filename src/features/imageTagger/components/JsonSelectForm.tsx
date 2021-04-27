@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 
 import { useAppDispatch } from "../../../app/hooks";
 import { loadJsonAsync } from "../imageTaggerSlice";
 
 const JsonSelectForm = () => {
-	const [error, setError] = useState("");
 	const dispatch = useAppDispatch();
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files[0]) {
