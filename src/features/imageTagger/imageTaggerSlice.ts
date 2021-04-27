@@ -143,18 +143,40 @@ export const imageTaggerSlice = createSlice({
 		},
 		dragArea: (state, action: PayloadAction<EditAreaPayload>) => {
 			if (state.imageDimensions) {
-				state.taggedAreas[action.payload.index].origin.x +=
+				const newX =
+					state.taggedAreas[action.payload.index].origin.x +
 					(action.payload.movX * 100) / state.imageDimensions.width;
-				state.taggedAreas[action.payload.index].origin.y +=
+				const newY =
+					state.taggedAreas[action.payload.index].origin.y +
 					(action.payload.movY * 100) / state.imageDimensions.height;
+				if (
+					newX >= 0 &&
+					newX <= 100 - state.taggedAreas[action.payload.index].width
+				) {
+					state.taggedAreas[action.payload.index].origin.x = newX;
+				}
+				if (
+					newY >= 0 &&
+					newY <= 100 - state.taggedAreas[action.payload.index].height
+				) {
+					state.taggedAreas[action.payload.index].origin.y = newY;
+				}
 			}
 		},
 		resizeArea: (state, action: PayloadAction<EditAreaPayload>) => {
 			if (state.imageDimensions) {
-				state.taggedAreas[action.payload.index].width +=
+				const newW =
+					state.taggedAreas[action.payload.index].width +
 					(action.payload.movX * 100) / state.imageDimensions.width;
-				state.taggedAreas[action.payload.index].height +=
+				const newH =
+					state.taggedAreas[action.payload.index].height +
 					(action.payload.movY * 100) / state.imageDimensions.height;
+				if (newW <= 100 - state.taggedAreas[action.payload.index].origin.x) {
+					state.taggedAreas[action.payload.index].width = newW;
+				}
+				if (newH <= 100 - state.taggedAreas[action.payload.index].origin.y) {
+					state.taggedAreas[action.payload.index].height = newH;
+				}
 			}
 		},
 		setAreaTitle: (state, action: PayloadAction<EditTitlePayload>) => {
