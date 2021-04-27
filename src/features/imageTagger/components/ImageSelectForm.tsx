@@ -8,6 +8,7 @@ const ImageSelectForm = () => {
 
 	const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		if (e.target.files && e.target.files[0]) {
+			console.log(e.target.files[0]);
 			dispatch(loadImageAsync(e.target.files[0]));
 		}
 	};

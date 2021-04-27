@@ -12,15 +12,17 @@ const ImageTaggerWrapper = () => {
 	const error = useAppSelector(getError);
 
 	return (
-		<div>
-			{imageData ? (
-				<ImageTagger />
-			) : (
-				<>
-					<ImageSelectForm />
-					<JsonSelectForm />
-				</>
-			)}
+		<div className='container'>
+			<div className='imageTaggerWrapper'>
+				{imageData ? (
+					<ImageTagger />
+				) : (
+					<>
+						<ImageSelectForm />
+						<JsonSelectForm />
+					</>
+				)}
+			</div>
 		</div>
 	);
 };

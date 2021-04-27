@@ -15,19 +15,22 @@ const ImageTagger = () => {
 	const nbOfTags = useAppSelector(getTaggedAreasLength);
 	const dispatch = useAppDispatch();
 	return (
-		<div className='imageTagger'>
-			<div className='image'>
-				<img src={imageData} alt='' />
-				<div className='imageMap'>
-					<AreaPicker />
-					{Array(nbOfTags)
-						.fill(null)
-						.map((_, i) => (
-							<Area key={i} index={i} />
-						))}
+		<div className='imageTagger row'>
+			<div className='col-12 col-md-6'>
+				<div className='image'>
+					<img className='img-fluid' src={imageData} alt='' />
+
+					<div className='imageMap'>
+						<AreaPicker />
+						{Array(nbOfTags)
+							.fill(null)
+							.map((_, i) => (
+								<Area key={i} index={i} />
+							))}
+					</div>
 				</div>
 			</div>
-			<div className='toolbar'>
+			<div className='toolbar col-12 col-md-6'>
 				<button onClick={() => dispatch(reinit())}></button>
 				<JsonDisplay />
 			</div>
