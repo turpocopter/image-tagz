@@ -31,7 +31,7 @@ const Area = ({ index }: AreaProps) => {
 		}
 	}, [isSelected]);
 
-	const handleMouseDown = () => {
+	const handleStartDrag = () => {
 		if (!isSelected) {
 			dispatch(selectAreaByIndex(index));
 		} else {
@@ -39,31 +39,54 @@ const Area = ({ index }: AreaProps) => {
 		}
 	};
 
-	const handleMouseMove = (e: React.MouseEvent) => {
+	useEffect(() => {
+		const handleDrag = (e: any) => {
+			if (isMoving) {
+				dispatch(dragArea({ index, movX: e.movementX, movY: e.movementY }));
+			}
+		};
+		const handleEndDrag = () => {
+			setIsMoving(false);
+		};
 		if (isMoving) {
-			dispatch(dragArea({ index, movX: e.movementX, movY: e.movementY }));
+			document.body.addEventListener("mousemove", handleDrag);
+			document.body.addEventListener("mouseup", handleEndDrag);
+			document.body.addEventListener("mouseleave", handleEndDrag);
 		}
-	};
-
-	const handleMouseUp = () => {
-		setIsMoving(false);
-	};
+		return () => {
+			document.body.removeEventListener("mousemove", handleDrag);
+			document.body.removeEventListener("mouseup", handleEndDrag);
+			document.body.removeEventListener("mouseleave", handleEndDrag);
+		};
+	}, [isMoving, dispatch, index]);
 
 	const handleStartResize = (e: React.MouseEvent) => {
 		e.stopPropagation();
 		setIsResizing(true);
 	};
 
-	const handleResize = (e: React.MouseEvent) => {
+	useEffect(() => {
+		const handleResize = (e: any) => {
+			if (isResizing) {
+				e.stopPropagation();
+				dispatch(resizeArea({ index, movX: e.movementX, movY: e.movementY }));
+			}
+		};
+		const handleEndResize = (e: any) => {
+			e.stopPropagation();
+			setIsResizing(false);
+		};
 		if (isResizing) {
-			dispatch(resizeArea({ index, movX: e.movementX, movY: e.movementY }));
+			document.body.addEventListener("mousemove", handleResize);
+			document.body.addEventListener("mouseup", handleEndResize);
+			document.body.addEventListener("mouseleave", handleEndResize);
 		}
-	};
-
-	const handleEndResize = (e: React.MouseEvent) => {
-		e.stopPropagation();
-		setIsResizing(false);
-	};
+		return () => {
+			document.body.removeEventListener("mousemove", handleResize);
+			document.body.removeEventListener("mouseup", handleEndResize);
+			document.body.removeEventListener("mouseleave", handleEndResize);
+		};
+	}, [isResizing, dispatch, index]);
 
 	const wrapperStyles = {
 		left: `${origin.x}%`,
@@ -77,17 +100,10 @@ const Area = ({ index }: AreaProps) => {
 		<div
 			className='areaWrapper'
 			style={wrapperStyles}
-			onMouseDown={handleMouseDown}
-			onMouseMove={handleMouseMove}
-			onMouseUp={handleMouseUp}>
+			onMouseDown={handleStartDrag}>
 			<div className={areaClasses.join(" ")}>
 				{isSelected && (
-					<div
-						className='areaResizer'
-						onMouseDown={handleStartResize}
-						onMouseMove={handleResize}
-						onMouseUp={handleEndResize}
-					/>
+					<div className='areaResizer' onMouseDown={handleStartResize} />
 				)}
 			</div>
 			{(isSelected || title !== "") && (
