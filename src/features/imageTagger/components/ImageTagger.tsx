@@ -26,7 +26,7 @@ const ImageTagger = () => {
 		return () => {
 			window.removeEventListener("resize", updateDisplayRatio);
 		};
-	}, []);
+	}, [dispatch]);
 	return (
 		<div className='imageTagger row'>
 			<div className='col-12 col-md-6'>
