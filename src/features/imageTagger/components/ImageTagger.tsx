@@ -1,23 +1,35 @@
 import React from "react";
-import { useAppSelector } from "../../../app/hooks";
-import { getImageData, getTaggedAreasLength } from "../imageTaggerSlice";
+import { useAppSelector, useAppDispatch } from "../../../app/hooks";
+import {
+	getImageData,
+	getTaggedAreasLength,
+	reinit,
+} from "../imageTaggerSlice";
 
 import AreaPicker from "./AreaPicker";
 import Area from "./Area";
+import JsonDisplay from "./JsonDisplay";
 
 const ImageTagger = () => {
 	const imageData = useAppSelector(getImageData);
 	const nbOfTags = useAppSelector(getTaggedAreasLength);
+	const dispatch = useAppDispatch();
 	return (
 		<div className='imageTagger'>
-			<img src={imageData} alt='' />
-			<div className='imageMap'>
-				<AreaPicker />
-				{Array(nbOfTags)
-					.fill(null)
-					.map((_, i) => (
-						<Area key={i} index={i} />
-					))}
+			<div className='image'>
+				<img src={imageData} alt='' />
+				<div className='imageMap'>
+					<AreaPicker />
+					{Array(nbOfTags)
+						.fill(null)
+						.map((_, i) => (
+							<Area key={i} index={i} />
+						))}
+				</div>
+			</div>
+			<div className='toolbar'>
+				<button onClick={() => dispatch(reinit())}></button>
+				<JsonDisplay />
 			</div>
 		</div>
 	);

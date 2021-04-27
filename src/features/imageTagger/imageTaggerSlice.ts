@@ -1,6 +1,12 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import testInterfaces from "./imageTaggerSlice-ti";
+import { createCheckers } from "ts-interface-checker";
 import { RootState } from "../../app/store";
-import Point from "./Point";
+
+export interface Point {
+	x: number;
+	y: number;
+}
 
 interface NewArea {
 	origin: Point;
@@ -8,9 +14,8 @@ interface NewArea {
 	height: number;
 }
 
-interface TaggedArea extends NewArea {
+export interface TaggedArea extends NewArea {
 	title: string;
-	isSelected: boolean;
 }
 
 interface ImageDimensions {
@@ -29,52 +34,112 @@ interface EditTitlePayload {
 	title: string;
 }
 
-export interface ImageTaggerState {
+interface TaggedImageData {
 	imageData: string | undefined;
 	imageDimensions: ImageDimensions | undefined;
 	taggedAreas: TaggedArea[];
 }
 
+export interface ImageTaggerState extends TaggedImageData {
+	selected: number | undefined;
+	error: string;
+}
+
+const { TaggedImageData: TaggedImageDataValidator } = createCheckers(
+	testInterfaces
+);
+
 const initialState: ImageTaggerState = {
 	imageData: undefined,
 	imageDimensions: undefined,
 	taggedAreas: [],
+	selected: undefined,
+	error: "",
 };
+
+export const convertBlobToBase64 = (blob: Blob): Promise<string> =>
+	new Promise((resolve, reject) => {
+		const reader = new FileReader();
+		reader.onerror = () => reject(new Error("impossible de charger l'image"));
+		reader.onload = () => {
+			resolve(reader.result as string);
+		};
+		reader.readAsDataURL(blob);
+	});
+
+export const getDimensionsFromImageData = (
+	imageData: string
+): Promise<ImageDimensions> =>
+	new Promise((resolve, reject) => {
+		const image = new Image();
+		image.src = imageData;
+		image.onerror = () => reject(new Error("image invalide"));
+		image.onload = () => {
+			resolve({ width: image.width, height: image.height });
+		};
+	});
+
+export const loadImageAsync = createAsyncThunk(
+	"imageTagger/loadImage",
+	async (file: File) => {
+		const blob = await new Response(file).blob();
+		const imageData = await convertBlobToBase64(blob);
+		const imageDimensions = await getDimensionsFromImageData(imageData);
+		return { imageData, imageDimensions };
+	}
+);
+
+export const loadJsonAsync = createAsyncThunk(
+	"imageTagger/loadJson",
+	async (file: File) => {
+		const jsonStr = await new Response(file).text();
+		let taggedImageData: TaggedImageData = {
+			imageData: "",
+			taggedAreas: [],
+			imageDimensions: undefined,
+		};
+		try {
+			taggedImageData = JSON.parse(jsonStr);
+			TaggedImageDataValidator.check(taggedImageData);
+		} catch (err) {
+			throw new Error("format de fichier invalide");
+		}
+
+		if (
+			!taggedImageData.imageData ||
+			!taggedImageData.taggedAreas ||
+			!Array.isArray(taggedImageData.taggedAreas)
+		)
+			throw new Error("format JSON incompatible");
+		taggedImageData.imageDimensions = await getDimensionsFromImageData(
+			taggedImageData.imageData
+		);
+		return taggedImageData;
+	}
+);
 
 export const imageTaggerSlice = createSlice({
 	name: "imageTagger",
 	initialState,
 	reducers: {
-		setImageData: (state, action: PayloadAction<string>) => {
-			state.imageData = action.payload;
-		},
-		setImageDimensions: (state, action: PayloadAction<ImageDimensions>) => {
-			state.imageDimensions = action.payload;
-		},
 		unselectAllAreas: (state) => {
-			state.taggedAreas = [
-				...state.taggedAreas.map((area) => ({ ...area, isSelected: false })),
-			];
+			state.selected = undefined;
 		},
 		addAndSelectArea: (state, action: PayloadAction<NewArea>) => {
-			state.taggedAreas = [
-				...state.taggedAreas.map((area) => ({ ...area, isSelected: false })),
-				{
-					origin: action.payload.origin,
-					width: action.payload.width,
-					height: action.payload.height,
-					title: "",
-					isSelected: true,
-				},
-			];
+			state.taggedAreas.push({
+				origin: action.payload.origin,
+				width: action.payload.width,
+				height: action.payload.height,
+				title: "",
+			});
+			state.selected = state.taggedAreas.length - 1;
 		},
 		selectAreaByIndex: (state, action: PayloadAction<number>) => {
-			state.taggedAreas = [
-				...state.taggedAreas.map((area, i) => ({
-					...area,
-					isSelected: action.payload === i,
-				})),
-			];
+			state.selected = action.payload;
+		},
+		deleteSelectedArea: (state, action: PayloadAction<number>) => {
+			state.taggedAreas.splice(action.payload, 1);
+			state.selected = undefined;
 		},
 		dragArea: (state, action: PayloadAction<EditAreaPayload>) => {
 			if (state.imageDimensions) {
@@ -95,24 +160,65 @@ export const imageTaggerSlice = createSlice({
 		setAreaTitle: (state, action: PayloadAction<EditTitlePayload>) => {
 			state.taggedAreas[action.payload.index].title = action.payload.title;
 		},
+		reinit: (state) => {
+			state = { ...initialState };
+		},
+	},
+	extraReducers: (builder) => {
+		builder
+			.addCase(loadImageAsync.fulfilled, (state, action) => {
+				state.imageData = action.payload.imageData;
+				state.imageDimensions = action.payload.imageDimensions;
+				state.error = "";
+			})
+			.addCase(loadImageAsync.rejected, (state, action) => {
+				state.error =
+					action.error.message || "le chargement de l'image a échoué";
+				console.log(state.error);
+			})
+			.addCase(loadJsonAsync.fulfilled, (state, action) => {
+				state.imageData = action.payload.imageData;
+				state.imageDimensions = action.payload.imageDimensions;
+				state.taggedAreas = action.payload.taggedAreas;
+				state.error = "";
+			})
+			.addCase(loadJsonAsync.rejected, (state, action) => {
+				state.error =
+					action.error.message || "le chargement du fichier JSON a échoué";
+				console.log(state.error);
+			});
 	},
 });
 
 export const {
-	setImageData,
-	setImageDimensions,
 	unselectAllAreas,
 	addAndSelectArea,
 	selectAreaByIndex,
+	deleteSelectedArea,
 	dragArea,
 	resizeArea,
 	setAreaTitle,
+	reinit,
 } = imageTaggerSlice.actions;
 
 export const getImageData = (state: RootState) => state.imageTagger.imageData;
+export const getError = (state: RootState) => state.imageTagger.error;
+export const hasSelection = (state: RootState) =>
+	state.imageTagger.selected !== undefined;
 export const getTaggedAreasLength = (state: RootState) =>
 	state.imageTagger.taggedAreas.length;
-export const getTaggedAreaData = (state: RootState, index: number) =>
-	state.imageTagger.taggedAreas[index];
+export const getTaggedAreaData = (state: RootState, index: number) => ({
+	...state.imageTagger.taggedAreas[index],
+	isSelected: state.imageTagger.selected === index,
+});
+export const getJsonData = (state: RootState) =>
+	JSON.stringify(
+		{
+			taggedAreas: state.imageTagger.taggedAreas,
+			imageData: state.imageTagger.imageData,
+		},
+		null,
+		2
+	);
 
 export default imageTaggerSlice.reducer;

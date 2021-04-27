@@ -1,8 +1,11 @@
 import React, { useState, useRef } from "react";
-import { useAppDispatch } from "../../../app/hooks";
-import { unselectAllAreas, addAndSelectArea } from "../imageTaggerSlice";
-
-import Point from "../Point";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import {
+	Point,
+	unselectAllAreas,
+	addAndSelectArea,
+	hasSelection,
+} from "../imageTaggerSlice";
 
 const pickLocalCoords = (pageCoords: Point, refElt: HTMLElement): Point => {
 	const {
@@ -22,10 +25,13 @@ const AreaPicker = () => {
 	const [startPoint, setStartPoint] = useState<Point | undefined>();
 	const [endPoint, setEndPoint] = useState<Point | undefined>();
 	const dispatch = useAppDispatch();
+	const cannotStartNewArea = useAppSelector(hasSelection);
 	const mapRef = useRef<any>();
 
 	const handleMouseDown = (e: React.MouseEvent) => {
-		if (!startPoint && e.target instanceof HTMLElement) {
+		if (cannotStartNewArea) {
+			dispatch(unselectAllAreas());
+		} else if (!startPoint && e.target instanceof HTMLElement) {
 			setStartPoint(
 				pickLocalCoords({ x: e.clientX, y: e.clientY }, mapRef.current)
 			);
@@ -59,9 +65,13 @@ const AreaPicker = () => {
 		}
 	};
 
+	const areaPickerClasses = ["areaPicker"];
+	if (startPoint) areaPickerClasses.push("selecting");
+	if (cannotStartNewArea) areaPickerClasses.push("inactive");
+
 	return (
 		<div
-			className='areaPicker'
+			className={areaPickerClasses.join(" ")}
 			ref={mapRef}
 			onMouseDown={handleMouseDown}
 			onMouseMove={handleMouseMove}

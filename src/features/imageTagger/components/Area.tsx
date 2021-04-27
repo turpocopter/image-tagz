@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
 import AutosizeInput from "react-input-autosize";
 import {
@@ -7,6 +7,7 @@ import {
 	dragArea,
 	resizeArea,
 	setAreaTitle,
+	deleteSelectedArea,
 } from "../imageTaggerSlice";
 
 interface AreaProps {
@@ -20,6 +21,15 @@ const Area = ({ index }: AreaProps) => {
 		getTaggedAreaData(state, index)
 	);
 	const dispatch = useAppDispatch();
+	const inputRef = useRef<HTMLInputElement | null>(null);
+
+	useEffect(() => {
+		if (isSelected && inputRef.current) {
+			setTimeout(() => inputRef.current && inputRef.current.focus(), 0);
+		} else {
+			inputRef.current = null;
+		}
+	}, [isSelected]);
 
 	const handleMouseDown = () => {
 		if (!isSelected) {
@@ -45,7 +55,6 @@ const Area = ({ index }: AreaProps) => {
 	};
 
 	const handleResize = (e: React.MouseEvent) => {
-		e.stopPropagation();
 		if (isResizing) {
 			dispatch(resizeArea({ index, movX: e.movementX, movY: e.movementY }));
 		}
@@ -81,18 +90,27 @@ const Area = ({ index }: AreaProps) => {
 					/>
 				)}
 			</div>
-			<div className='areaTag'>
-				{isSelected ? (
-					<AutosizeInput
-						value={title}
-						onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-							dispatch(setAreaTitle({ index, title: e.target.value }))
-						}
-					/>
-				) : (
-					<p>{title}</p>
-				)}
-			</div>
+			{(isSelected || title !== "") && (
+				<div className='areaTag'>
+					{isSelected ? (
+						<AutosizeInput
+							autoFocus
+							value={title}
+							onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+								dispatch(setAreaTitle({ index, title: e.target.value }))
+							}
+							inputRef={(input) => (inputRef.current = input)}
+						/>
+					) : (
+						<p>{title}</p>
+					)}
+				</div>
+			)}
+			{isSelected && (
+				<div
+					className='areaDelete'
+					onClick={(e) => dispatch(deleteSelectedArea(index))}></div>
+			)}
 		</div>
 	);
 };

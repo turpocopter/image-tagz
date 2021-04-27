@@ -1,4 +1,4 @@
-.imageTagger {
+.image {
 	display: inline-block;
 	position: relative;
 }
@@ -16,39 +16,16 @@
 	height: 100%;
 	width: 100%;
 	cursor: crosshair;
+	&.selecting {
+		z-index: 10;
+	}
+	&.inactive {
+		cursor: default;
+	}
 }
 .areaWrapper {
 	position: absolute;
 	box-sizing: border-box;
-	.area {
-		position: absolute;
-		box-sizing: border-box;
-		border: 2px dashed rgb(162, 248, 255);
-		background-color: rgba(162, 248, 255, 0.3);
-		top: 0;
-		left: 0;
-		height: 100%;
-		width: 100%;
-		&:not(.initialized) {
-			cursor: pointer;
-		}
-		&.initialized,
-		&.selected {
-			border: 2px dashed red;
-			background-color: rgba(255, 0, 0, 0.3);
-		}
-		&.selected {
-			cursor: move;
-		}
-		.areaResizer {
-			position: absolute;
-			width: 20px;
-			height: 20px;
-			bottom: 0;
-			right: 0;
-			cursor: nwse-resize;
-		}
-	}
 	.areaTag {
 		position: absolute;
 		top: 100%;
@@ -61,6 +38,7 @@
 		p {
 			margin: 0;
 			font-size: 14px;
+			padding: 2px 1px;
 		}
 		input {
 			font-size: 14px;
@@ -70,5 +48,44 @@
 			border: none;
 			outline: none;
 		}
+	}
+	.areaDelete {
+		position: absolute;
+		height: 25px;
+		width: 25px;
+		top: -25px;
+		right: 0;
+		background-color: black;
+		cursor: pointer;
+	}
+}
+
+.area {
+	position: absolute;
+	box-sizing: border-box;
+	border: 2px dashed rgb(162, 248, 255);
+	background-color: rgba(162, 248, 255, 0.3);
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+	&:not(.initialized) {
+		cursor: pointer;
+	}
+	&.initialized,
+	&.selected {
+		border: 2px dashed red;
+		background-color: rgba(255, 0, 0, 0.3);
+	}
+	&.selected {
+		cursor: move;
+	}
+	.areaResizer {
+		position: absolute;
+		width: 20px;
+		height: 20px;
+		bottom: 0;
+		right: 0;
+		cursor: nwse-resize;
 	}
 }
