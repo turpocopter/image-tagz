@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaExpandAlt } from "react-icons/fa";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
 import AutosizeInput from "react-input-autosize";
 import {
@@ -108,7 +108,9 @@ const Area = ({ index }: AreaProps) => {
 			onMouseDown={handleStartDrag}>
 			<div className={areaClasses.join(" ")}>
 				{isSelected && (
-					<div className='areaResizer' onMouseDown={handleStartResize} />
+					<div className='areaResizer' onMouseDown={handleStartResize}>
+						<FaExpandAlt size={22} />
+					</div>
 				)}
 			</div>
 			{(isSelected || title !== "") && (

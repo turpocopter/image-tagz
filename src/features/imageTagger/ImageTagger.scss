@@ -106,11 +106,14 @@ $color-danger: red;
 	}
 	.areaResizer {
 		position: absolute;
-		width: 20px;
-		height: 20px;
+		width: 30px;
+		height: 30px;
 		bottom: 0;
 		right: 0;
 		cursor: nwse-resize;
+		color: white;
+		padding: 2px 3px;
+		transform: rotate(90deg);
 	}
 }
 .toolbar {
