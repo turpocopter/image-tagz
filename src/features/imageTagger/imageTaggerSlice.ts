@@ -234,28 +234,13 @@ export const getImageData = (state: RootState) => state.imageTagger.imageData;
 export const getError = (state: RootState) => state.imageTagger.error;
 export const hasSelection = (state: RootState) =>
 	state.imageTagger.selected !== undefined;
+export const getTaggedAreas = (state: RootState) =>
+	state.imageTagger.taggedAreas;
 export const getTaggedAreasLength = (state: RootState) =>
 	state.imageTagger.taggedAreas.length;
 export const getTaggedAreaData = (state: RootState, index: number) => ({
 	...state.imageTagger.taggedAreas[index],
 	isSelected: state.imageTagger.selected === index,
 });
-export const getJsonTags = (state: RootState) =>
-	JSON.stringify(
-		{
-			taggedAreas: state.imageTagger.taggedAreas,
-		},
-		null,
-		2
-	);
-export const getFullJson = (state: RootState) =>
-	JSON.stringify(
-		{
-			taggedAreas: state.imageTagger.taggedAreas,
-			imageData: state.imageTagger.imageData,
-		},
-		null,
-		2
-	);
 
 export default imageTaggerSlice.reducer;

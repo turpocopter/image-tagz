@@ -2,14 +2,14 @@ import React from "react";
 import { FaTrash, FaFileDownload } from "react-icons/fa";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
 import {
-	getJsonTags,
+	getTaggedAreas,
 	getTaggedAreasLength,
 	getImageData,
 	reinit,
 } from "../imageTaggerSlice";
 
 const Toolbar = () => {
-	const jsonTags = useAppSelector(getJsonTags);
+	const taggedAreas = useAppSelector(getTaggedAreas);
 	const imageData = useAppSelector(getImageData);
 	const hasTags = useAppSelector(getTaggedAreasLength) > 0;
 	const dispatch = useAppDispatch();
@@ -17,7 +17,7 @@ const Toolbar = () => {
 	const handleClick = (e: any) => {
 		if (imageData) {
 			e.target.href = `data:text/json;charset=utf-8,${encodeURIComponent(
-				JSON.stringify(imageData, null, 2)
+				JSON.stringify({ taggedAreas, imageData }, null, 2)
 			)}`;
 		}
 	};
@@ -39,7 +39,12 @@ const Toolbar = () => {
 					<FaTrash size={18} /> Discard
 				</button>
 			</div>
-			<textarea className='jsonDisplay' rows={15} value={jsonTags} readOnly />
+			<textarea
+				className='jsonDisplay'
+				rows={15}
+				value={JSON.stringify({ taggedAreas }, null, 2)}
+				readOnly
+			/>
 		</div>
 	);
 };
