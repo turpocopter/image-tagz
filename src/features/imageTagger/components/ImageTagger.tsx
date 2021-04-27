@@ -1,14 +1,10 @@
 import React from "react";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import {
-	getImageData,
-	getTaggedAreasLength,
-	reinit,
-} from "../imageTaggerSlice";
+import { getImageData, getTaggedAreasLength } from "../imageTaggerSlice";
 
 import AreaPicker from "./AreaPicker";
 import Area from "./Area";
-import JsonDisplay from "./JsonDisplay";
+import Toolbar from "./Toolbar";
 
 const ImageTagger = () => {
 	const imageData = useAppSelector(getImageData);
@@ -31,8 +27,7 @@ const ImageTagger = () => {
 				</div>
 			</div>
 			<div className='toolbar col-12 col-md-6'>
-				<button onClick={() => dispatch(reinit())}></button>
-				<JsonDisplay />
+				<Toolbar />
 			</div>
 		</div>
 	);

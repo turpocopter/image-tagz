@@ -182,9 +182,7 @@ export const imageTaggerSlice = createSlice({
 		setAreaTitle: (state, action: PayloadAction<EditTitlePayload>) => {
 			state.taggedAreas[action.payload.index].title = action.payload.title;
 		},
-		reinit: (state) => {
-			state = { ...initialState };
-		},
+		reinit: (state) => initialState,
 	},
 	extraReducers: (builder) => {
 		builder
@@ -233,7 +231,15 @@ export const getTaggedAreaData = (state: RootState, index: number) => ({
 	...state.imageTagger.taggedAreas[index],
 	isSelected: state.imageTagger.selected === index,
 });
-export const getJsonData = (state: RootState) =>
+export const getJsonTags = (state: RootState) =>
+	JSON.stringify(
+		{
+			taggedAreas: state.imageTagger.taggedAreas,
+		},
+		null,
+		2
+	);
+export const getFullJson = (state: RootState) =>
 	JSON.stringify(
 		{
 			taggedAreas: state.imageTagger.taggedAreas,
