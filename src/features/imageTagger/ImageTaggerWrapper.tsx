@@ -17,10 +17,11 @@ const ImageTaggerWrapper = () => {
 				{imageData ? (
 					<ImageTagger />
 				) : (
-					<>
+					<div className='fileSelection'>
+						{error && <p className='error'>ERREUR : {error}</p>}
 						<ImageSelectForm />
 						<JsonSelectForm />
-					</>
+					</div>
 				)}
 			</div>
 		</div>

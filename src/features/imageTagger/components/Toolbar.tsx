@@ -1,10 +1,17 @@
 import React from "react";
+import { FaTrash, FaFileDownload } from "react-icons/fa";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
-import { getJsonTags, getImageData, reinit } from "../imageTaggerSlice";
+import {
+	getJsonTags,
+	getTaggedAreasLength,
+	getImageData,
+	reinit,
+} from "../imageTaggerSlice";
 
 const Toolbar = () => {
 	const jsonTags = useAppSelector(getJsonTags);
 	const imageData = useAppSelector(getImageData);
+	const hasTags = useAppSelector(getTaggedAreasLength) > 0;
 	const dispatch = useAppDispatch();
 
 	const handleClick = (e: any) => {
@@ -16,19 +23,21 @@ const Toolbar = () => {
 	};
 
 	return (
-		<div>
+		<div className='toolbar'>
 			<div className='text-end mb-3'>
-				<button className='btn btn-danger' onClick={() => dispatch(reinit())}>
-					Discard
-				</button>
+				{hasTags && (
+					<a
+						className='btn btn-success'
+						onClick={handleClick}
+						href='./index.html'
+						download='taggedImage.json'>
+						<FaFileDownload size={18} /> Download JSON
+					</a>
+				)}
 				&nbsp;&nbsp;&nbsp;
-				<a
-					className='btn btn-success'
-					onClick={handleClick}
-					href='./index.html'
-					download='taggedImage.json'>
-					Download JSON
-				</a>
+				<button className='btn btn-danger' onClick={() => dispatch(reinit())}>
+					<FaTrash size={18} /> Discard
+				</button>
 			</div>
 			<textarea className='jsonDisplay' rows={15} value={jsonTags} readOnly />
 		</div>

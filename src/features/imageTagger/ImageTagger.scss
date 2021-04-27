@@ -1,3 +1,9 @@
+$color-selection-inactive: rgb(6, 69, 75);
+$color-selection-inactive-bg: rgba(6, 69, 75, 0.3);
+$color-selection-active: rgb(46, 17, 193);
+$color-selection-active-bg: rgba(46, 17, 193, 0.3);
+$color-danger: red;
+
 .imageTaggerWrapper {
 	min-height: 90vh;
 	margin: 5vh 0;
@@ -36,16 +42,20 @@
 	.areaTag {
 		position: absolute;
 		top: 100%;
-		left: -1px;
-		background-color: red;
+		left: 0;
+		background-color: $color-selection-inactive;
 		color: white;
 		font-weight: bold;
 		padding: 3px 7px;
 		border-radius: 0 0 3px 3px;
+		max-width: 100%;
 		p {
 			margin: 0;
 			font-size: 14px;
 			padding: 2px 1px;
+			white-space: nowrap;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 		input {
 			font-size: 14px;
@@ -58,20 +68,27 @@
 	}
 	.areaDelete {
 		position: absolute;
-		height: 25px;
-		width: 25px;
-		top: -25px;
+		height: 35px;
+		width: 35px;
+		top: -35px;
+		padding: 5px;
 		right: 0;
-		background-color: black;
+		color: $color-danger;
 		cursor: pointer;
+	}
+	&.selected {
+		.areaTag {
+			max-width: none;
+			background-color: $color-selection-active;
+		}
 	}
 }
 
 .area {
 	position: absolute;
 	box-sizing: border-box;
-	border: 2px dashed rgb(162, 248, 255);
-	background-color: rgba(162, 248, 255, 0.3);
+	border: 2px dashed $color-selection-inactive;
+	background-color: $color-selection-inactive-bg;
 	top: 0;
 	left: 0;
 	height: 100%;
@@ -81,8 +98,8 @@
 	}
 	&.initialized,
 	&.selected {
-		border: 2px dashed red;
-		background-color: rgba(255, 0, 0, 0.3);
+		border: 2px dashed $color-selection-active;
+		background-color: $color-selection-active-bg;
 	}
 	&.selected {
 		cursor: move;
@@ -94,5 +111,24 @@
 		bottom: 0;
 		right: 0;
 		cursor: nwse-resize;
+	}
+}
+.toolbar {
+	button svg {
+		vertical-align: text-top;
+	}
+	.jsonDisplay {
+		width: 100%;
+	}
+}
+.fileSelection {
+	text-align: center;
+	.error {
+		margin: 20px;
+		font-weight: bold;
+		color: $color-danger;
+	}
+	.selectForm {
+		margin: 20px;
 	}
 }

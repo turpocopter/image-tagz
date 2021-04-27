@@ -14,7 +14,8 @@ const ImageSelectForm = () => {
 	};
 
 	return (
-		<div>
+		<div className='selectForm'>
+			<h2>Selectionner une image (jpg ou png)</h2>
 			<input
 				type='file'
 				accept='image/png, image/jpeg'

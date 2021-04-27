@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { FaTrash } from "react-icons/fa";
 import { useAppSelector, useAppDispatch } from "../../../app/hooks";
 import AutosizeInput from "react-input-autosize";
 import {
@@ -94,11 +95,15 @@ const Area = ({ index }: AreaProps) => {
 		width: `${width}%`,
 		height: `${height}%`,
 	};
+	const areaWrapperClasses = ["areaWrapper"];
 	const areaClasses = ["area"];
-	if (isSelected) areaClasses.push("selected");
+	if (isSelected) {
+		areaWrapperClasses.push("selected");
+		areaClasses.push("selected");
+	}
 	return (
 		<div
-			className='areaWrapper'
+			className={areaWrapperClasses.join(" ")}
 			style={wrapperStyles}
 			onMouseDown={handleStartDrag}>
 			<div className={areaClasses.join(" ")}>
@@ -125,7 +130,9 @@ const Area = ({ index }: AreaProps) => {
 			{isSelected && (
 				<div
 					className='areaDelete'
-					onClick={(e) => dispatch(deleteSelectedArea(index))}></div>
+					onClick={(e) => dispatch(deleteSelectedArea(index))}>
+					<FaTrash size={24} />
+				</div>
 			)}
 		</div>
 	);
