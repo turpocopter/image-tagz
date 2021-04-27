@@ -19,6 +19,7 @@
     "react-redux": "^7.2.0",
     "react-scripts": "4.0.3",
     "sass": "^1.32.11",
+    "ts-interface-checker": "^1.0.0",
     "typescript": "~4.1.5"
   },
   "scripts": {
@@ -41,5 +42,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "ts-interface-builder": "^0.3.0"
   }
 }
