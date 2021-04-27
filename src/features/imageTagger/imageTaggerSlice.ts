@@ -145,7 +145,6 @@ export const imageTaggerSlice = createSlice({
 		},
 		dragArea: (state, action: PayloadAction<EditAreaPayload>) => {
 			if (state.imageDimensions) {
-				console.log(state.displayRatio);
 				const newX =
 					state.taggedAreas[action.payload.index].origin.x +
 					(state.displayRatio * action.payload.movX * 100) /
@@ -205,7 +204,6 @@ export const imageTaggerSlice = createSlice({
 			.addCase(loadImageAsync.rejected, (state, action) => {
 				state.error =
 					action.error.message || "le chargement de l'image a échoué";
-				console.log(state.error);
 			})
 			.addCase(loadJsonAsync.fulfilled, (state, action) => {
 				state.imageData = action.payload.imageData;
@@ -216,7 +214,6 @@ export const imageTaggerSlice = createSlice({
 			.addCase(loadJsonAsync.rejected, (state, action) => {
 				state.error =
 					action.error.message || "le chargement du fichier JSON a échoué";
-				console.log(state.error);
 			});
 	},
 });
