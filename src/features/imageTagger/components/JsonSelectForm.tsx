@@ -13,7 +13,7 @@ const JsonSelectForm = () => {
 
 	return (
 		<div className='selectForm'>
-			<h2>Selectionner une fichier JSON</h2>
+			<h2>Sélectionner un fichier JSON</h2>
 			<input type='file' accept='text/json' onChange={handleChange} />
 		</div>
 	);
