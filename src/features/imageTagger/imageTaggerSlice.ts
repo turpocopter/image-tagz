@@ -43,6 +43,7 @@ interface TaggedImageData {
 export interface ImageTaggerState extends TaggedImageData {
 	selected: number | undefined;
 	error: string;
+	displayRatio: number;
 }
 
 const { TaggedImageData: TaggedImageDataValidator } = createCheckers(
@@ -55,6 +56,7 @@ const initialState: ImageTaggerState = {
 	taggedAreas: [],
 	selected: undefined,
 	error: "",
+	displayRatio: 1,
 };
 
 export const convertBlobToBase64 = (blob: Blob): Promise<string> =>
@@ -143,12 +145,15 @@ export const imageTaggerSlice = createSlice({
 		},
 		dragArea: (state, action: PayloadAction<EditAreaPayload>) => {
 			if (state.imageDimensions) {
+				console.log(state.displayRatio);
 				const newX =
 					state.taggedAreas[action.payload.index].origin.x +
-					(action.payload.movX * 100) / state.imageDimensions.width;
+					(state.displayRatio * action.payload.movX * 100) /
+						state.imageDimensions.width;
 				const newY =
 					state.taggedAreas[action.payload.index].origin.y +
-					(action.payload.movY * 100) / state.imageDimensions.height;
+					(state.displayRatio * action.payload.movY * 100) /
+						state.imageDimensions.height;
 				if (
 					newX >= 0 &&
 					newX <= 100 - state.taggedAreas[action.payload.index].width
@@ -167,10 +172,12 @@ export const imageTaggerSlice = createSlice({
 			if (state.imageDimensions) {
 				const newW =
 					state.taggedAreas[action.payload.index].width +
-					(action.payload.movX * 100) / state.imageDimensions.width;
+					(state.displayRatio * action.payload.movX * 100) /
+						state.imageDimensions.width;
 				const newH =
 					state.taggedAreas[action.payload.index].height +
-					(action.payload.movY * 100) / state.imageDimensions.height;
+					(state.displayRatio * action.payload.movY * 100) /
+						state.imageDimensions.height;
 				if (newW <= 100 - state.taggedAreas[action.payload.index].origin.x) {
 					state.taggedAreas[action.payload.index].width = newW;
 				}
@@ -178,6 +185,10 @@ export const imageTaggerSlice = createSlice({
 					state.taggedAreas[action.payload.index].height = newH;
 				}
 			}
+		},
+		setDisplayRatio: (state, action: PayloadAction<number>) => {
+			if (state.imageDimensions)
+				state.displayRatio = state.imageDimensions.width / action.payload;
 		},
 		setAreaTitle: (state, action: PayloadAction<EditTitlePayload>) => {
 			state.taggedAreas[action.payload.index].title = action.payload.title;
@@ -218,6 +229,7 @@ export const {
 	dragArea,
 	resizeArea,
 	setAreaTitle,
+	setDisplayRatio,
 	reinit,
 } = imageTaggerSlice.actions;
 
